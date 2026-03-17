@@ -1,0 +1,2505 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>韓国語単語学習アプリ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@300;400;500;700;800;900&family=Nanum+Gothic:wght@400;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
+
+    :root {
+      --primary: #2D5F3F;
+      --primary-dark: #1E4029;
+      --secondary: #4A8B5C;
+      --accent: #7ABF8E;
+      --bg-main: #F8FAF9;
+      --bg-gradient: linear-gradient(135deg, #F8FAF9 0%, #E8F5EC 100%);
+      --card-bg: #FFFFFF;
+      --text-primary: #1A1A1A;
+      --text-secondary: #666666;
+      --text-tertiary: #999999;
+      --border: rgba(45, 95, 63, 0.12);
+      --shadow-sm: 0 2px 8px rgba(45, 95, 63, 0.08);
+      --shadow-md: 0 8px 24px rgba(45, 95, 63, 0.12);
+      --shadow-lg: 0 16px 48px rgba(45, 95, 63, 0.16);
+      --radius-sm: 12px;
+      --radius-md: 20px;
+      --radius-lg: 28px;
+    }
+
+    body {
+      font-family: 'M PLUS Rounded 1c', 'Noto Sans JP', sans-serif;
+      background: var(--bg-main);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      right: -20%;
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(45, 95, 63, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      animation: float 20s ease-in-out infinite;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -30%;
+      left: -15%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(74, 139, 92, 0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      animation: float 25s ease-in-out infinite reverse;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(30px, -30px) rotate(5deg); }
+      66% { transform: translate(-20px, 20px) rotate(-5deg); }
+    }
+
+    .korean-text { font-family: 'Nanum Gothic', sans-serif; }
+    
+    .container { 
+      max-width: 1000px; 
+      margin: 0 auto; 
+      padding: 40px 24px; 
+      min-height: 100vh; 
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      padding: 30px 24px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white;
+      border-radius: var(--radius-lg);
+      margin-bottom: 32px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 0px;
+      background: transparent;
+    }
+
+    header h1 { 
+      font-family: 'M PLUS Rounded 1c', serif;
+      font-size: 42px; 
+      font-weight: 800; 
+      margin-bottom: 16px;
+      color: white;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      animation: slideDown 0.8s ease-out;
+    }
+
+    header .author { 
+      font-size: 16px; 
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 12px;
+      font-weight: 500;
+      animation: slideDown 0.8s ease-out 0.1s both;
+    }
+
+    header .description { 
+      font-size: 15px; 
+      color: rgba(255, 255, 255, 0.8);
+      line-height: 1.6;
+      max-width: 600px;
+      margin: 0 auto;
+      animation: slideDown 0.8s ease-out 0.2s both;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Progress Overview */
+    .progress-overview {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: var(--radius-md);
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border);
+      animation: fadeInUp 0.6s ease-out 0.3s both;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .progress-overview h2 { 
+      font-family: 'M PLUS Rounded 1c', serif;
+      font-size: 20px; 
+      margin-bottom: 16px; 
+      color: var(--primary);
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .progress-stats { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); 
+      gap: 12px; 
+    }
+
+    .stat-card { 
+      text-align: center; 
+      padding: 16px 12px; 
+      background: var(--bg-main);
+      border-radius: var(--radius-md);
+      border: 2px solid transparent;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      transform: scaleX(0);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-md);
+    }
+
+    .stat-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .stat-value { 
+      font-size: 36px; 
+      font-weight: 800; 
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: block;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .stat-label { 
+      font-size: 13px; 
+      color: var(--text-tertiary);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Unit Grid */
+    .units-grid { 
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+      gap: 16px; 
+      margin-bottom: 24px;
+    }
+
+    .unit-card {
+      background: var(--card-bg);
+      padding: 20px 16px;
+      border-radius: var(--radius-md);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: var(--shadow-sm);
+      border: 2px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .unit-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: 0;
+    }
+
+    .unit-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary);
+    }
+
+    .unit-card:hover::before {
+      opacity: 0.05;
+    }
+
+    .unit-card.completed {
+      background: linear-gradient(135deg, var(--secondary) 0%, #00D4B8 100%);
+      color: white;
+      border-color: transparent;
+    }
+
+    .unit-card.completed .unit-number,
+    .unit-card.completed .unit-progress {
+      color: white;
+    }
+
+    .unit-card > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .unit-number { 
+      font-family: 'M PLUS Rounded 1c', serif;
+      font-size: 22px; 
+      font-weight: 800; 
+      margin-bottom: 8px;
+      color: var(--primary);
+      letter-spacing: -0.01em;
+    }
+
+    .unit-progress { 
+      font-size: 13px; 
+      color: var(--text-tertiary);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .completion-badge { 
+      position: absolute; 
+      top: 12px; 
+      right: 12px; 
+      font-size: 24px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal.active { 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      padding: 48px 40px;
+      border-radius: var(--radius-lg);
+      max-width: 560px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
+      animation: modalSlide 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid var(--border);
+    }
+
+    @keyframes modalSlide {
+      from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .modal-header { 
+      text-align: center; 
+      margin-bottom: 32px; 
+    }
+
+    .modal-header h2 { 
+      font-family: 'M PLUS Rounded 1c', serif;
+      font-size: 38px; 
+      color: var(--primary);
+      margin-bottom: 12px;
+      font-weight: 800;
+    }
+    
+    .modal-header p {
+      font-size: 18px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .modal-buttons { 
+      display: grid; 
+      gap: 16px; 
+    }
+
+    .btn {
+      padding: 20px 36px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'M PLUS Rounded 1c', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .btn:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .btn > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-primary { 
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white; 
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-primary:hover { 
+      transform: translateY(-3px); 
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-secondary { 
+      background: linear-gradient(135deg, var(--secondary) 0%, #00D4B8 100%);
+      color: white; 
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-secondary:hover { 
+      transform: translateY(-3px); 
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-back { 
+      background: var(--bg-main);
+      color: var(--text-primary);
+      margin-top: 12px;
+      border: 2px solid var(--border);
+    }
+
+    .btn-back:hover {
+      background: white;
+      border-color: var(--primary);
+    }
+
+    /* Flashcard */
+    .flashcard-container { 
+      perspective: 1200px; 
+      min-height: 450px; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 28px; 
+    }
+
+    .flashcard {
+      width: 100%;
+      height: 360px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+
+    .flashcard.flipped { 
+      transform: rotateY(180deg); 
+    }
+
+    .flashcard-front, .flashcard-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .flashcard-front { 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white; 
+    }
+
+    .flashcard-back { 
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white; 
+      transform: rotateY(180deg); 
+    }
+
+    .flashcard-word { 
+      font-family: 'Noto Sans KR', sans-serif;
+      font-size: 64px; 
+      font-weight: 900; 
+      margin-bottom: 24px;
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      letter-spacing: -0.02em;
+    }
+
+    .flashcard-hint { 
+      font-size: 18px; 
+      opacity: 0.95;
+      font-weight: 500;
+    }
+
+    .audio-btn {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.25);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      font-size: 28px;
+      cursor: pointer;
+      margin-top: 24px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(10px);
+    }
+
+    .audio-btn:hover { 
+      background: rgba(255, 255, 255, 0.35);
+      transform: scale(1.15);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .flashcard-controls { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      gap: 16px; 
+    }
+
+    .nav-btn {
+      padding: 16px 32px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-family: 'M PLUS Rounded 1c', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .nav-btn:hover { 
+      transform: translateY(-2px); 
+      box-shadow: var(--shadow-md);
+      background: var(--primary-dark);
+    }
+
+    .nav-btn:disabled { 
+      opacity: 0.4; 
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .card-counter { 
+      font-size: 18px; 
+      color: var(--text-secondary);
+      font-weight: 700;
+    }
+
+    /* Quiz */
+    .quiz-container { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 28px; 
+    }
+
+    .quiz-question { 
+      background: var(--card-bg);
+      padding: 40px; 
+      border-radius: var(--radius-md);
+      text-align: center; 
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border);
+    }
+
+    .quiz-word { 
+      font-family: 'Nanum Gothic', sans-serif;
+      font-size: 72px; 
+      font-weight: 900; 
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .quiz-prompt { 
+      font-size: 20px; 
+      color: var(--text-tertiary);
+      font-weight: 600;
+    }
+    
+    .mic-button-container {
+      text-align: center;
+      padding: 40px 0;
+    }
+    
+    .answer-display {
+      text-align: center;
+      font-size: 24px;
+      color: var(--primary);
+      font-weight: 700;
+      min-height: 40px;
+      margin: 20px 0;
+      font-family: 'M PLUS Rounded 1c', 'Nanum Gothic', sans-serif;
+    }
+
+    .voice-input-area { 
+      text-align: center; 
+      padding: 40px; 
+      background: var(--bg-main);
+      border-radius: var(--radius-md);
+      border: 2px dashed var(--border);
+    }
+    
+    .voice-status-outside {
+      text-align: center;
+      font-size: 20px;
+      color: var(--primary);
+      font-weight: 700;
+      margin: 24px 0;
+      min-height: 32px;
+    }
+
+    .mic-btn {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%);
+      border: 4px solid white;
+      color: white;
+      font-size: 50px;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(255, 105, 180, 0.3);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      margin-bottom: 0px;
+      position: relative;
+    }
+    
+    .mic-btn::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3), transparent);
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+    
+    .mic-icon {
+      display: inline-block;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    }
+
+    .mic-btn:hover { 
+      transform: scale(1.15);
+      box-shadow: 0 12px 32px rgba(255, 105, 180, 0.4);
+    }
+
+    .mic-btn.recording {
+      animation: pulse 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      box-shadow: 0 12px 32px rgba(45, 95, 63, 0.4);
+    }
+
+    @keyframes pulse { 
+      0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 8px 24px rgba(45, 95, 63, 0.3);
+      } 
+      50% { 
+        transform: scale(1.1);
+        box-shadow: 0 16px 48px rgba(45, 95, 63, 0.5);
+      } 
+    }
+
+    .voice-status { 
+      font-size: 15px; 
+      color: var(--text-tertiary);
+      min-height: 28px;
+      font-weight: 500;
+    }
+
+    .answer-input {
+      width: 100%;
+      padding: 18px 20px;
+      font-size: 20px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      margin-top: 20px;
+      font-family: 'M PLUS Rounded 1c', 'Nanum Gothic', sans-serif;
+      transition: all 0.3s ease;
+      background: white;
+      text-align: center;
+      color: var(--primary);
+      font-weight: 700;
+    }
+    
+    .answer-input[readonly] {
+      background: var(--bg-main);
+      cursor: default;
+    }
+
+    .answer-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(45, 95, 63, 0.1);
+    }
+
+    .quiz-result { 
+      padding: 24px; 
+      border-radius: var(--radius-sm);
+      text-align: center; 
+      margin-top: 20px; 
+      font-size: 17px; 
+      font-weight: 700;
+    }
+
+    .quiz-result.correct { 
+      background: linear-gradient(135deg, #D4EDDA 0%, #C3E6CB 100%);
+      color: #155724;
+      border: 2px solid #C3E6CB;
+    }
+
+    .quiz-result.incorrect { 
+      background: linear-gradient(135deg, #F8D7DA 0%, #F5C6CB 100%);
+      color: #721C24;
+      border: 2px solid #F5C6CB;
+    }
+
+    .quiz-summary { 
+      text-align: center; 
+      padding: 60px 40px; 
+    }
+
+    .quiz-score { 
+      font-family: 'M PLUS Rounded 1c', serif;
+      font-size: 96px; 
+      font-weight: 900; 
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 24px;
+      line-height: 1;
+    }
+
+    .quiz-message { 
+      font-size: 22px; 
+      margin-bottom: 32px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    /* Loading */
+    .loading { 
+      display: none; 
+      text-align: center; 
+      padding: 60px 40px; 
+    }
+
+    .loading.active { 
+      display: block; 
+    }
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid var(--border);
+      border-top-color: var(--primary);
+      border-right-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin { 
+      to { transform: rotate(360deg); } 
+    }
+
+    @keyframes fadeIn { 
+      from { opacity: 0; } 
+      to { opacity: 1; } 
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .container { padding: 16px 12px; }
+      
+      header { padding: 24px 16px; margin-bottom: 20px; }
+      header h1 { font-size: 26px; }
+      header .author { font-size: 13px; }
+      header .description { font-size: 13px; }
+      
+      .progress-overview { padding: 16px; margin-bottom: 16px; }
+      .progress-overview h2 { font-size: 16px; margin-bottom: 12px; }
+      .progress-stats { gap: 8px; }
+      .stat-card { padding: 12px 8px; }
+      .stat-value { font-size: 28px; }
+      .stat-label { font-size: 11px; }
+      
+      .units-grid { 
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+      .unit-card { padding: 16px 12px; }
+      .unit-number { font-size: 18px; }
+      .unit-progress { font-size: 11px; }
+      
+      .flashcard { height: 300px; }
+      .flashcard-word { font-size: 48px; }
+      .flashcard-hint { font-size: 16px; }
+      
+      .quiz-word { font-size: 56px; }
+      .quiz-prompt { font-size: 18px; }
+      .voice-status-outside { font-size: 18px; }
+      .quiz-score { font-size: 72px; }
+      
+      .modal-content { padding: 32px 24px; }
+      .modal-header h2 { font-size: 28px; }
+      
+      .btn { padding: 16px 24px; font-size: 13px; }
+      
+      .copyright { 
+        font-size: 11px; 
+        padding: 20px 12px; 
+        margin-top: 24px; 
+      }
+    }
+
+    .hidden { 
+      display: none !important; 
+    }
+    
+    /* Collapsible Section */
+    .collapsible-section {
+      max-height: 2000px;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    
+    .collapsible-section.collapsed {
+      max-height: 0;
+    }
+    
+    /* Copyright Footer */
+    .copyright {
+      text-align: center;
+      padding: 30px 20px;
+      margin-top: 40px;
+      border-top: 1px solid var(--border);
+      color: var(--text-tertiary);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    
+    .copyright p {
+      margin: 4px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>talk talk 韓国語</h1>
+      <div class="author">金昌九（キム・チャング）</div>
+    </header>
+
+    <div class="progress-overview">
+      <h2 onclick="toggleSection('section1')" style="cursor: pointer;">
+        <span id="icon1">▼</span> 第1課〜第10課 学習進捗
+      </h2>
+      <div id="section1" class="collapsible-section">
+        <div class="progress-stats">
+          <div class="stat-card">
+            <span class="stat-value" id="totalUnits1">10</span>
+            <div class="stat-label">総単元数</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="completedUnits1">0</span>
+            <div class="stat-label">完了単元</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="totalWords1">368</span>
+            <div class="stat-label">総単語数</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="completedWords1">0</span>
+            <div class="stat-label">完了単語</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="loading active" id="mainLoading">
+      <div class="spinner"></div>
+      <div>読み込み中...</div>
+    </div>
+
+    <div id="grid1-container" class="collapsible-section">
+      <div class="units-grid hidden" id="unitsGrid1"></div>
+    </div>
+
+    <div class="progress-overview">
+      <h2 onclick="toggleSection('section2')" style="cursor: pointer;">
+        <span id="icon2">▼</span> 第11課〜第20課 学習進捗
+      </h2>
+      <div id="section2" class="collapsible-section">
+        <div class="progress-stats">
+          <div class="stat-card">
+            <span class="stat-value" id="totalUnits2">10</span>
+            <div class="stat-label">総単元数</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="completedUnits2">0</span>
+            <div class="stat-label">完了単元</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="totalWords2">564</span>
+            <div class="stat-label">総単語数</div>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="completedWords2">0</span>
+            <div class="stat-label">完了単語</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="grid2-container" class="collapsible-section">
+      <div class="units-grid hidden" id="unitsGrid2"></div>
+    </div>
+    
+    <footer class="copyright">
+      <p>© 2026 Changgoo Kim</p>
+      <p>「テーマで学ぶ talk talk 韓国語（初級）」</p>
+    </footer>
+  </div>
+
+  <!-- Unit Modal -->
+  <div class="modal" id="unitModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalUnitTitle">第1課</h2>
+        <p id="modalUnitSubtitle">学習方法を選択してください</p>
+      </div>
+      <div class="modal-buttons">
+        <button class="btn btn-primary" onclick="startFlashcards()">
+          <span>📚</span>
+          <span>フラッシュカードで学習</span>
+        </button>
+        <button class="btn btn-secondary" onclick="showQuizOptions()">
+          <span>✏️</span>
+          <span>クイズに挑戦</span>
+        </button>
+        <button class="btn btn-back" onclick="closeModal()">
+          <span>戻る</span>
+        </button>
+      </div>
+      <div class="modal-buttons hidden" id="quizOptionsButtons">
+        <button class="btn btn-primary" onclick="startQuiz('kr-to-jp')">
+          <span>🇰🇷 → 🇯🇵</span>
+          <span>韓国語 → 日本語</span>
+        </button>
+        <button class="btn btn-secondary" onclick="startQuiz('jp-to-kr')">
+          <span>🇯🇵 → 🇰🇷</span>
+          <span>日本語 → 韓国語</span>
+        </button>
+        <button class="btn btn-back" onclick="hideQuizOptions()">
+          <span>戻る</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Flashcard Modal -->
+  <div class="modal" id="flashcardModal">
+    <div class="modal-content">
+      <div class="flashcard-container">
+        <div class="flashcard" id="flashcard" onclick="flipCard()">
+          <div class="flashcard-front">
+            <div class="flashcard-word korean-text" id="flashcardWord">안녕하세요</div>
+            <div class="flashcard-hint">タップで日本語表示</div>
+            <button class="audio-btn" onclick="playAudio(event)">🔊</button>
+          </div>
+          <div class="flashcard-back">
+            <div class="flashcard-word" id="flashcardMeaning">こんにちは</div>
+            <div class="flashcard-hint">タップで韓国語表示</div>
+          </div>
+        </div>
+        <div class="flashcard-controls">
+          <button class="nav-btn" id="prevBtn" onclick="previousCard()">◀</button>
+          <div class="card-counter">
+            <span id="currentCard">1</span>/<span id="totalCards">10</span>
+          </div>
+          <button class="nav-btn" id="nextBtn" onclick="nextCard()">▶</button>
+        </div>
+      </div>
+      <button class="btn btn-back" onclick="closeFlashcardModal()" style="margin-top: 24px;">学習を終了</button>
+    </div>
+  </div>
+
+  <!-- Quiz Modal -->
+  <div class="modal" id="quizModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="quizTitle">クイズ</h2>
+        <button class="btn btn-back" onclick="closeQuizModal()" style="margin-top: 8px; width: 100%;">クイズを終了</button>
+      </div>
+      <div class="quiz-container" id="quizContainer">
+        <div class="quiz-question">
+          <div class="quiz-word korean-text" id="quizWord">안녕하세요</div>
+          <div class="quiz-prompt" id="quizPrompt">日本語の意味を話してください</div>
+        </div>
+        <div class="voice-status-outside" id="voiceStatus">マイクボタンを押して音声入力</div>
+        <div class="mic-button-container">
+          <button class="mic-btn" id="micBtn" onclick="toggleRecording()">
+            <span class="mic-icon">🎙️</span>
+          </button>
+        </div>
+        <div class="answer-display" id="answerInput"></div>
+        <div class="quiz-result hidden" id="quizResult"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 데모용 단어 데이터
+    const demoWords = {
+      1: [
+        { korean: '씨', japanese: '～さん' },
+        { korean: '가방', japanese: 'かばん' },
+        { korean: '나이', japanese: '年齢' },
+        { korean: '네', japanese: 'はい' },
+        { korean: '독일', japanese: 'ドイツ' },
+        { korean: '만나서 반가워요.', japanese: 'はじめまして。' },
+        { korean: '뭐', japanese: '何' },
+        { korean: '뭐예요?', japanese: '何ですか？' },
+        { korean: '미국', japanese: 'アメリカ' },
+        { korean: '미국 사람', japanese: 'アメリカ人' },
+        { korean: '비밀', japanese: '秘密' },
+        { korean: '안녕하세요?', japanese: 'こんにちは？' },
+        { korean: '영어', japanese: '英語' },
+        { korean: '이름', japanese: '名前' },
+        { korean: '일본', japanese: '日本' },
+        { korean: '일본 사람', japanese: '日本人' },
+        { korean: '일본어', japanese: '日本語' },
+        { korean: '저', japanese: '私' },
+        { korean: '전공', japanese: '専攻' },
+        { korean: '중국', japanese: '中国' },
+        { korean: '진짜', japanese: '本当' },
+        { korean: '진짜예요?', japanese: '本当ですか？' },
+        { korean: '친구', japanese: '友達' },
+        { korean: '프랑스', japanese: 'フランス' },
+        { korean: '한국', japanese: '韓国' },
+        { korean: '한국 사람', japanese: '韓国人' },
+        { korean: '한국어', japanese: '韓国語' },
+      ],
+      2: [
+        { korean: '1학년', japanese: '1年生' },
+        { korean: '가수', japanese: '歌手' },
+        { korean: '간호사', japanese: '看護師' },
+        { korean: '경제학', japanese: '経済学' },
+        { korean: '경찰', japanese: '警察官' },
+        { korean: '공무원', japanese: '公務員' },
+        { korean: '대학교', japanese: '大学' },
+        { korean: '배우', japanese: '俳優' },
+        { korean: '병원', japanese: '病院' },
+        { korean: '선생님', japanese: '先生' },
+        { korean: '아뇨', japanese: 'いいえ' },
+        { korean: '아니에요', japanese: '違います' },
+        { korean: '우체국', japanese: '郵便局' },
+        { korean: '은행', japanese: '銀行' },
+        { korean: '의사', japanese: '医者' },
+        { korean: '주부', japanese: '主婦' },
+        { korean: '집', japanese: '家' },
+        { korean: '팬', japanese: 'ファン' },
+        { korean: '학교', japanese: '学校' },
+        { korean: '학년', japanese: '学年' },
+        { korean: '학생', japanese: '学生' },
+        { korean: '회사', japanese: '会社' },
+        { korean: '회사원', japanese: '会社員' },
+      ],
+      3: [
+        { korean: '가방', japanese: 'かばん' },
+        { korean: '교실', japanese: '教室' },
+        { korean: '그', japanese: 'その' },
+        { korean: '그거', japanese: 'それ' },
+        { korean: '노트북', japanese: 'ノートパソコン' },
+        { korean: '누구', japanese: '誰' },
+        { korean: '누구예요?', japanese: '誰ですか？' },
+        { korean: '돈', japanese: 'お金' },
+        { korean: '모자', japanese: '帽子' },
+        { korean: '볼펜', japanese: 'ボールペン' },
+        { korean: '사전', japanese: '辞書' },
+        { korean: '사진', japanese: '写真' },
+        { korean: '스마트폰', japanese: 'スマートフォン' },
+        { korean: '시계', japanese: '時計' },
+        { korean: '우산', japanese: '傘' },
+        { korean: '의자', japanese: '椅子' },
+        { korean: '이', japanese: 'この' },
+        { korean: '이거', japanese: 'これ' },
+        { korean: '저', japanese: 'あの' },
+        { korean: '저거', japanese: 'あれ' },
+        { korean: '지갑', japanese: '財布' },
+        { korean: '책', japanese: '本' },
+        { korean: '책상', japanese: '机' },
+        { korean: '카드', japanese: 'カード' },
+        { korean: '티슈', japanese: 'ティッシュ' },
+        { korean: '학생증', japanese: '学生証' },
+        { korean: '화장품', japanese: '化粧品' },
+      ],
+      4: [
+        { korean: '개', japanese: '～個' },
+        { korean: '명', japanese: '～人' },
+        { korean: '사람', japanese: '～人' },
+        { korean: '살', japanese: '～歳' },
+        { korean: '가족', japanese: '家族' },
+        { korean: '그리고', japanese: 'そして' },
+        { korean: '남자 친구', japanese: '彼氏' },
+        { korean: '넷', japanese: '四つ' },
+        { korean: '누나', japanese: '姉（女性の年上の姉）' },
+        { korean: '다섯', japanese: '五つ' },
+        { korean: '동생', japanese: '弟／妹' },
+        { korean: '둘', japanese: '二つ' },
+        { korean: '모두', japanese: 'みんな' },
+        { korean: '빵', japanese: 'パン' },
+        { korean: '셋', japanese: '三つ' },
+        { korean: '수업', japanese: '授業' },
+        { korean: '스물', japanese: '二十' },
+        { korean: '아빠', japanese: '父' },
+        { korean: '아홉', japanese: '九つ' },
+        { korean: '언니', japanese: '姉（年上の女兄弟）' },
+        { korean: '엄마', japanese: '母' },
+        { korean: '없다', japanese: 'ない/いない' },
+        { korean: '여덟', japanese: '八つ' },
+        { korean: '여섯', japanese: '六つ' },
+        { korean: '여자 친구', japanese: '彼女' },
+        { korean: '열', japanese: '十' },
+        { korean: '오빠', japanese: '兄（年上の男兄弟）' },
+        { korean: '일곱', japanese: '七つ' },
+        { korean: '있다', japanese: 'ある／いる' },
+        { korean: '질문', japanese: '質問' },
+        { korean: '하나', japanese: '一つ' },
+        { korean: '할머니', japanese: '祖母' },
+        { korean: '할아버지', japanese: '祖父' },
+        { korean: '형', japanese: '兄（男性の年上の兄）' },
+      ],
+      5: [
+        { korean: '가게', japanese: '店' },
+        { korean: '거기', japanese: 'そこ' },
+        { korean: '고향', japanese: '故郷' },
+        { korean: '공원', japanese: '公園' },
+        { korean: '극장', japanese: '劇場' },
+        { korean: '근처', japanese: '近く' },
+        { korean: '기숙사', japanese: '寮' },
+        { korean: '도서관', japanese: '図書館' },
+        { korean: '뒤', japanese: '後ろ' },
+        { korean: '밑', japanese: '下' },
+        { korean: '박스', japanese: '箱' },
+        { korean: '백화점', japanese: 'デパート' },
+        { korean: '병원', japanese: '病院' },
+        { korean: '생일', japanese: '誕生日' },
+        { korean: '시장', japanese: '市場' },
+        { korean: '시험', japanese: '試験' },
+        { korean: '식당', japanese: '食堂' },
+        { korean: '아래', japanese: '下' },
+        { korean: '아파트', japanese: 'アパート' },
+        { korean: '앞', japanese: '前' },
+        { korean: '어디', japanese: 'どこ' },
+        { korean: '언제', japanese: 'いつ' },
+        { korean: '여기', japanese: 'ここ' },
+        { korean: '옆', japanese: '横' },
+        { korean: '오늘', japanese: '今日' },
+        { korean: '오른쪽', japanese: '右' },
+        { korean: '왼쪽', japanese: '左' },
+        { korean: '요리', japanese: '料理' },
+        { korean: '우리', japanese: '私たち' },
+        { korean: '우체국', japanese: '郵便局' },
+        { korean: '위', japanese: '上' },
+        { korean: '의자', japanese: '椅子' },
+        { korean: '저기', japanese: 'あそこ' },
+        { korean: '전공', japanese: '専攻' },
+        { korean: '집', japanese: '家' },
+        { korean: '취미', japanese: '趣味' },
+        { korean: '편의점', japanese: 'コンビニ' },
+        { korean: '학교', japanese: '学校' },
+        { korean: '화장실', japanese: 'トイレ' },
+      ],
+      6: [
+        { korean: '개', japanese: '～個' },
+        { korean: '명', japanese: '～人' },
+        { korean: '살', japanese: '～歳' },
+        { korean: '시', japanese: '～時' },
+        { korean: '가족', japanese: '家族' },
+        { korean: '같이', japanese: '一緒に' },
+        { korean: '개', japanese: '犬' },
+        { korean: '고양이', japanese: '猫' },
+        { korean: '그래요?', japanese: 'そうですか？' },
+        { korean: '그럼', japanese: 'では' },
+        { korean: '냉장고', japanese: '冷蔵庫' },
+        { korean: '누구', japanese: '誰' },
+        { korean: '돈', japanese: 'お金' },
+        { korean: '몇', japanese: 'いくつ' },
+        { korean: '밖', japanese: '外' },
+        { korean: '방', japanese: '部屋' },
+        { korean: '빵집', japanese: 'パン屋' },
+        { korean: '사이', japanese: '間' },
+        { korean: '사진', japanese: '写真' },
+        { korean: '살다', japanese: '住む' },
+        { korean: '세탁기', japanese: '洗濯機' },
+        { korean: '소파', japanese: 'ソファー' },
+        { korean: '시계', japanese: '時計' },
+        { korean: '안', japanese: '中' },
+        { korean: '에어컨', japanese: 'エアコン' },
+        { korean: '여기', japanese: 'ここ' },
+        { korean: '오른쪽', japanese: '右' },
+        { korean: '왼쪽', japanese: '左' },
+        { korean: '의자', japanese: '椅子' },
+        { korean: '지갑', japanese: '財布' },
+        { korean: '책상', japanese: '机' },
+        { korean: '침대', japanese: 'ベッド' },
+        { korean: '컴퓨터', japanese: 'コンピューター' },
+        { korean: '텔레비전', japanese: 'テレビ' },
+        { korean: '혼자', japanese: '一人で' },
+        { korean: '화장실', japanese: 'トイレ' },
+        { korean: '휴지통', japanese: 'ゴミ箱' },
+      ],
+      7: [
+        { korean: '고맙다', japanese: 'ありがたい' },
+        { korean: '공부하다', japanese: '勉強する' },
+        { korean: '구', japanese: '九' },
+        { korean: '구월', japanese: '九月' },
+        { korean: '너무', japanese: 'とても' },
+        { korean: '노래', japanese: '歌' },
+        { korean: '노래하다', japanese: '歌う' },
+        { korean: '다이어트하다', japanese: 'ダイエットする' },
+        { korean: '데이트하다', japanese: 'デートする' },
+        { korean: '며칠', japanese: '何日' },
+        { korean: '몇 월', japanese: '何月' },
+        { korean: '방학', japanese: '休み' },
+        { korean: '사', japanese: '四' },
+        { korean: '사월', japanese: '四月' },
+        { korean: '삼', japanese: '三' },
+        { korean: '삼십', japanese: '三十' },
+        { korean: '삼월', japanese: '三月' },
+        { korean: '생일', japanese: '誕生日' },
+        { korean: '설날', japanese: '旧正月' },
+        { korean: '세일', japanese: 'セール' },
+        { korean: '시월', japanese: '十月' },
+        { korean: '시험', japanese: '試験' },
+        { korean: '실은', japanese: '実は' },
+        { korean: '십', japanese: '十' },
+        { korean: '십이월', japanese: '十二月' },
+        { korean: '십일월', japanese: '十一月' },
+        { korean: '아르바이트하다', japanese: 'アルバイトする' },
+        { korean: '약속', japanese: '約束' },
+        { korean: '여행하다', japanese: '旅行する' },
+        { korean: '연휴', japanese: '連休' },
+        { korean: '오', japanese: '五' },
+        { korean: '오월', japanese: '五月' },
+        { korean: '요리하다', japanese: '料理する' },
+        { korean: '운동하다', japanese: '運動する' },
+        { korean: '유월', japanese: '六月' },
+        { korean: '육', japanese: '六' },
+        { korean: '이', japanese: '二' },
+        { korean: '이십', japanese: '二十' },
+        { korean: '이야기', japanese: '話' },
+        { korean: '이월', japanese: '二月' },
+        { korean: '일', japanese: '一' },
+        { korean: '일월', japanese: '一月' },
+        { korean: '재미있다', japanese: '面白い' },
+        { korean: '저녁', japanese: '夕方' },
+        { korean: '정말', japanese: '本当に' },
+        { korean: '좋아하다', japanese: '好きだ' },
+        { korean: '추석', japanese: '秋夕' },
+        { korean: '축제', japanese: '祭り' },
+        { korean: '축하하다', japanese: '祝う' },
+        { korean: '칠', japanese: '七' },
+        { korean: '칠월', japanese: '七月' },
+        { korean: '크리스마스', japanese: 'クリスマス' },
+        { korean: '팔', japanese: '八' },
+        { korean: '팔월', japanese: '八月' },
+        { korean: '하다', japanese: 'する' },
+      ],
+      8: [
+        { korean: '가다', japanese: '行く' },
+        { korean: '가르치다', japanese: '教える' },
+        { korean: '공부하다', japanese: '勉強する' },
+        { korean: '괜찮다', japanese: '大丈夫だ' },
+        { korean: '기다리다', japanese: '待つ' },
+        { korean: '내일', japanese: '明日' },
+        { korean: '놀다', japanese: '遊ぶ' },
+        { korean: '누구', japanese: '誰' },
+        { korean: '다니다', japanese: '通う' },
+        { korean: '도서관', japanese: '図書館' },
+        { korean: '둘이서', japanese: '二人で' },
+        { korean: '드라마', japanese: 'ドラマ' },
+        { korean: '듣다', japanese: '聞く' },
+        { korean: '마시다', japanese: '飲む' },
+        { korean: '만나다', japanese: '会う' },
+        { korean: '맛있다', japanese: 'おいしい' },
+        { korean: '맞다', japanese: '合っている' },
+        { korean: '매일', japanese: '毎日' },
+        { korean: '먹다', japanese: '食べる' },
+        { korean: '밥', japanese: 'ご飯' },
+        { korean: '배우다', japanese: '学ぶ' },
+        { korean: '보다', japanese: '見る' },
+        { korean: '살다', japanese: '住む' },
+        { korean: '수업', japanese: '授業' },
+        { korean: '시간', japanese: '時間' },
+        { korean: '시내', japanese: '市内' },
+        { korean: '알다', japanese: '知る' },
+        { korean: '어디', japanese: 'どこ' },
+        { korean: '어제', japanese: '昨日' },
+        { korean: '영어', japanese: '英語' },
+        { korean: '오늘', japanese: '今日' },
+        { korean: '오다', japanese: '来る' },
+        { korean: '요리하다', japanese: '料理する' },
+        { korean: '운동하다', japanese: '運動する' },
+        { korean: '음악', japanese: '音楽' },
+        { korean: '일하다', japanese: '働く' },
+        { korean: '읽다', japanese: '読む' },
+        { korean: '자다', japanese: '寝る' },
+        { korean: '좋다', japanese: '良い' },
+        { korean: '좋아하다', japanese: '好きだ' },
+        { korean: '지금', japanese: '今' },
+        { korean: '책', japanese: '本' },
+        { korean: '커피', japanese: 'コーヒー' },
+        { korean: '회사', japanese: '会社' },
+      ],
+      9: [
+        { korean: '반', japanese: '～半' },
+        { korean: '쯤', japanese: '～ごろ' },
+        { korean: '가다', japanese: '行く' },
+        { korean: '그리고', japanese: 'そして' },
+        { korean: '놀다', japanese: '遊ぶ' },
+        { korean: '늦게', japanese: '遅く' },
+        { korean: '돌아오다', japanese: '帰ってくる' },
+        { korean: '듣다', japanese: '聞く' },
+        { korean: '먹다', japanese: '食べる' },
+        { korean: '몇 분', japanese: '何分' },
+        { korean: '몇 시', japanese: '何時' },
+        { korean: '밤', japanese: '夜' },
+        { korean: '보통', japanese: '普通' },
+        { korean: '샤워하다', japanese: 'シャワーする' },
+        { korean: '세수하다', japanese: '顔を洗う' },
+        { korean: '수업', japanese: '授業' },
+        { korean: '아침', japanese: '朝' },
+        { korean: '오다', japanese: '来る' },
+        { korean: '오전', japanese: '午前' },
+        { korean: '오후', japanese: '午後' },
+        { korean: '이야기하다', japanese: '話す' },
+        { korean: '일어나다', japanese: '起きる' },
+        { korean: '일찍', japanese: '早く' },
+        { korean: '자다', japanese: '寝る' },
+        { korean: '저녁', japanese: '夕方' },
+        { korean: '점심', japanese: '昼' },
+        { korean: '지금', japanese: '今' },
+        { korean: '친구', japanese: '友達' },
+        { korean: '하루', japanese: '一日' },
+        { korean: '학교', japanese: '学校' },
+        { korean: '화장실', japanese: 'トイレ' },
+        { korean: '화장하다', japanese: '化粧する' },
+      ],
+      10: [
+        { korean: '가끔', japanese: 'たまに' },
+        { korean: '같이', japanese: '一緒に' },
+        { korean: '거의 안', japanese: 'ほとんど～ない' },
+        { korean: '그래서', japanese: 'だから' },
+        { korean: '그래요', japanese: 'そうです' },
+        { korean: '금요일', japanese: '金曜日' },
+        { korean: '낚시', japanese: '釣り' },
+        { korean: '노래', japanese: '歌' },
+        { korean: '뉴스', japanese: 'ニュース' },
+        { korean: '독서', japanese: '読書' },
+        { korean: '듣다', japanese: '聞く' },
+        { korean: '등산', japanese: '登山' },
+        { korean: '만들다', japanese: '作る' },
+        { korean: '맛있다', japanese: 'おいしい' },
+        { korean: '맞아요', japanese: 'そうです' },
+        { korean: '매일', japanese: '毎日' },
+        { korean: '못하다', japanese: '下手だ' },
+        { korean: '무슨', japanese: '何の' },
+        { korean: '바쁘다', japanese: '忙しい' },
+        { korean: '사장님', japanese: '店長' },
+        { korean: '사진', japanese: '写真' },
+        { korean: '손님', japanese: 'お客様' },
+        { korean: '시간', japanese: '時間' },
+        { korean: '싫어하다', japanese: '嫌いだ' },
+        { korean: '야구', japanese: '野球' },
+        { korean: '여행', japanese: '旅行' },
+        { korean: '영화', japanese: '映画' },
+        { korean: '왜요?', japanese: 'どうしてですか？' },
+        { korean: '요리', japanese: '料理' },
+        { korean: '운전', japanese: '運転' },
+        { korean: '월요일', japanese: '月曜日' },
+        { korean: '음악', japanese: '音楽' },
+        { korean: '읽다', japanese: '読む' },
+        { korean: '자주', japanese: 'よく' },
+        { korean: '잘 못하다', japanese: 'あまり上手ではない' },
+        { korean: '잘하다', japanese: '上手だ' },
+        { korean: '잠시만', japanese: 'ちょっと待ってください' },
+        { korean: '전혀 안', japanese: '全く～ない' },
+        { korean: '정말', japanese: '本当に' },
+        { korean: '좋아하다', japanese: '好きだ' },
+        { korean: '주말', japanese: '週末' },
+        { korean: '찍다', japanese: '撮る' },
+        { korean: '참', japanese: '本当に' },
+        { korean: '책', japanese: '本' },
+        { korean: '청소', japanese: '掃除' },
+        { korean: '축구', japanese: 'サッカー' },
+        { korean: '취미', japanese: '趣味' },
+        { korean: '치다', japanese: '弾く' },
+        { korean: '피아노', japanese: 'ピアノ' },
+        { korean: '하지만', japanese: 'しかし' },
+      ],
+      11: [
+        { korean: '갔다 오다', japanese: '行ってくる' },
+        { korean: '고향', japanese: '故郷' },
+        { korean: '교실', japanese: '教室' },
+        { korean: '그래서', japanese: 'だから' },
+        { korean: '극장', japanese: '劇場' },
+        { korean: '기다리다', japanese: '待つ' },
+        { korean: '낮잠', japanese: '昼寝' },
+        { korean: '너무', japanese: 'とても' },
+        { korean: '놀다', japanese: '遊ぶ' },
+        { korean: '늦잠', japanese: '朝寝坊' },
+        { korean: '데이트하다', japanese: 'デートする' },
+        { korean: '마시다', japanese: '飲む' },
+        { korean: '많이', japanese: 'たくさん' },
+        { korean: '물', japanese: '水' },
+        { korean: '배우다', japanese: '習う' },
+        { korean: '빨래하다', japanese: '洗濯する' },
+        { korean: '사진', japanese: '写真' },
+        { korean: '살다', japanese: '住む' },
+        { korean: '서울', japanese: 'ソウル' },
+        { korean: '쇼핑하다', japanese: '買い物する' },
+        { korean: '술', japanese: 'お酒' },
+        { korean: '쉬다', japanese: '休む' },
+        { korean: '시내', japanese: '市内' },
+        { korean: '심심하다', japanese: '退屈だ' },
+        { korean: '아무 데도', japanese: 'どこにも' },
+        { korean: '앞', japanese: '前' },
+        { korean: '약속', japanese: '約束' },
+        { korean: '어디서', japanese: 'どこで' },
+        { korean: '어제', japanese: '昨日' },
+        { korean: '여기', japanese: 'ここ' },
+        { korean: '여행', japanese: '旅行' },
+        { korean: '요리하다', japanese: '料理する' },
+        { korean: '요일', japanese: '曜日' },
+        { korean: '일찍', japanese: '早く' },
+        { korean: '일하다', japanese: '働く' },
+        { korean: '자다', japanese: '寝る' },
+        { korean: '재미없다', japanese: 'つまらない' },
+        { korean: '재미있다', japanese: '面白い' },
+        { korean: '좋다', japanese: '良い' },
+        { korean: '주말', japanese: '週末' },
+        { korean: '지금', japanese: '今' },
+        { korean: '지난주', japanese: '先週' },
+        { korean: '청소하다', japanese: '掃除する' },
+        { korean: '카페', japanese: 'カフェ' },
+        { korean: '편의점', japanese: 'コンビニ' },
+        { korean: '피곤하다', japanese: '疲れている' },
+        { korean: '혼자', japanese: '一人で' },
+        { korean: '힘들다', japanese: '大変だ' },
+      ],
+      12: [
+        { korean: '가끔', japanese: 'たまに' },
+        { korean: '가수', japanese: '歌手' },
+        { korean: '가장', japanese: '一番' },
+        { korean: '계란', japanese: '卵' },
+        { korean: '고기', japanese: '肉' },
+        { korean: '고추', japanese: '唐辛子' },
+        { korean: '과일', japanese: '果物' },
+        { korean: '국', japanese: 'スープ' },
+        { korean: '그래서', japanese: 'だから' },
+        { korean: '김밥', japanese: 'キンパ' },
+        { korean: '김치', japanese: 'キムチ' },
+        { korean: '나물', japanese: 'ナムル' },
+        { korean: '나이', japanese: '年齢' },
+        { korean: '냉면', japanese: '冷麺' },
+        { korean: '너무', japanese: 'とても' },
+        { korean: '달다', japanese: '甘い' },
+        { korean: '닭고기', japanese: '鶏肉' },
+        { korean: '돼지고기', japanese: '豚肉' },
+        { korean: '딸기', japanese: 'いちご' },
+        { korean: '떡볶이', japanese: 'トッポッキ' },
+        { korean: '노래', japanese: '歌' },
+        { korean: '마늘', japanese: 'にんにく' },
+        { korean: '맛', japanese: '味' },
+        { korean: '맛없다', japanese: 'まずい' },
+        { korean: '맛있다', japanese: 'おいしい' },
+        { korean: '맞다', japanese: '合っている' },
+        { korean: '맵다', japanese: '辛い' },
+        { korean: '모두', japanese: 'みんな' },
+        { korean: '모르다', japanese: '知らない' },
+        { korean: '무슨', japanese: 'どんな' },
+        { korean: '물', japanese: '水' },
+        { korean: '반', japanese: '半' },
+        { korean: '밥', japanese: 'ご飯' },
+        { korean: '비빔밥', japanese: 'ビビンバ' },
+        { korean: '사과', japanese: 'りんご' },
+        { korean: '삼겹살', japanese: 'サムギョプサル' },
+        { korean: '생선', japanese: '魚' },
+        { korean: '소고기', japanese: '牛肉' },
+        { korean: '술', japanese: 'お酒' },
+        { korean: '시다', japanese: '酸っぱい' },
+        { korean: '식사하다', japanese: '食事する' },
+        { korean: '싱겁다', japanese: '薄い' },
+        { korean: '쓰다', japanese: '苦い' },
+        { korean: '아주', japanese: 'とても' },
+        { korean: '알다', japanese: '知る' },
+        { korean: '야채', japanese: '野菜' },
+        { korean: '엄청', japanese: 'とても' },
+        { korean: '오뎅', japanese: 'おでん' },
+        { korean: '외국인', japanese: '外国人' },
+        { korean: '요일', japanese: '曜日' },
+        { korean: '우동', japanese: 'うどん' },
+        { korean: '우리', japanese: '私たち' },
+        { korean: '우유', japanese: '牛乳' },
+        { korean: '음료', japanese: '飲み物' },
+        { korean: '음식', japanese: '食べ物' },
+        { korean: '일', japanese: '仕事' },
+        { korean: '자주', japanese: 'よく' },
+        { korean: '조금', japanese: '少し' },
+        { korean: '짜다', japanese: 'しょっぱい' },
+        { korean: '찌개', japanese: 'チゲ' },
+        { korean: '차', japanese: 'お茶・車' },
+        { korean: '참치', japanese: 'マグロ' },
+        { korean: '채소', japanese: '野菜' },
+        { korean: '초밥', japanese: '寿司' },
+        { korean: '카레', japanese: 'カレー' },
+        { korean: '콜라', japanese: 'コーラ' },
+        { korean: '특히', japanese: '特に' },
+        { korean: '틀리다', japanese: '間違っている' },
+        { korean: '파', japanese: 'ねぎ' },
+        { korean: '포도', japanese: 'ぶどう' },
+        { korean: '하지만', japanese: 'しかし' },
+        { korean: '햄버거', japanese: 'ハンバーガー' },
+        { korean: '회', japanese: '刺身' },
+        { korean: '힘들다', japanese: '大変だ' },
+      ],
+      13: [
+        { korean: '갈아타는 곳', japanese: '乗り換え場所' },
+        { korean: '갈아타다', japanese: '乗り換える' },
+        { korean: '걸리다', japanese: 'かかる' },
+        { korean: '걸어서', japanese: '歩いて' },
+        { korean: '공항', japanese: '空港' },
+        { korean: '근처', japanese: '近く' },
+        { korean: '기차', japanese: '汽車' },
+        { korean: '내리다', japanese: '降りる' },
+        { korean: '너무', japanese: 'とても' },
+        { korean: '마시다', japanese: '飲む' },
+        { korean: '맥주', japanese: 'ビール' },
+        { korean: '바다', japanese: '海' },
+        { korean: '배', japanese: '船' },
+        { korean: '버스', japanese: 'バス' },
+        { korean: '부산', japanese: '釜山' },
+        { korean: '비행기', japanese: '飛行機' },
+        { korean: '산', japanese: '山' },
+        { korean: '숟가락', japanese: 'スプーン' },
+        { korean: '시간', japanese: '時間' },
+        { korean: '시내', japanese: '市内' },
+        { korean: '시장', japanese: '市場' },
+        { korean: '어떻게', japanese: 'どうやって' },
+        { korean: '여기', japanese: 'ここ' },
+        { korean: '역', japanese: '駅' },
+        { korean: '예쁘다', japanese: 'きれいだ' },
+        { korean: '이야기하다', japanese: '話す' },
+        { korean: '일찍', japanese: '早く' },
+        { korean: '자다', japanese: '寝る' },
+        { korean: '자전거', japanese: '自転車' },
+        { korean: '잘', japanese: 'よく' },
+        { korean: '저기', japanese: 'あそこ' },
+        { korean: '전철', japanese: '電車' },
+        { korean: '젓가락', japanese: '箸' },
+        { korean: '정류장', japanese: '停留所' },
+        { korean: '정말', japanese: '本当に' },
+        { korean: '제주도', japanese: '済州島' },
+        { korean: '지금', japanese: '今' },
+        { korean: '지하철', japanese: '地下鉄' },
+        { korean: '지하철역', japanese: '地下鉄駅' },
+        { korean: '차', japanese: '車' },
+        { korean: '타는 곳', japanese: '乗り場' },
+        { korean: '타다', japanese: '乗る' },
+        { korean: '택시', japanese: 'タクシー' },
+        { korean: '터미널', japanese: 'ターミナル' },
+        { korean: '티켓', japanese: 'チケット' },
+        { korean: '표', japanese: '切符' },
+        { korean: '표파는 곳', japanese: '切符売り場' },
+        { korean: '피곤하다', japanese: '疲れている' },
+        { korean: '하지만', japanese: 'しかし' },
+        { korean: '한라산', japanese: '漢拏山' },
+        { korean: '힘들다', japanese: '大変だ' },
+      ],
+      14: [
+        { korean: '(사진을) 찍다', japanese: '（写真を）撮る' },
+        { korean: '가져가다', japanese: '持っていく' },
+        { korean: '구경하다', japanese: '見物する' },
+        { korean: '그냥', japanese: 'ただ' },
+        { korean: '그런데', japanese: 'ところで' },
+        { korean: '근데', japanese: 'ところで' },
+        { korean: '김밥', japanese: 'キンパ' },
+        { korean: '내년', japanese: '来年' },
+        { korean: '냉면', japanese: '冷麺' },
+        { korean: '늦게', japanese: '遅く' },
+        { korean: '드라마', japanese: 'ドラマ' },
+        { korean: '등산하다', japanese: '登山する' },
+        { korean: '만들다', japanese: '作る' },
+        { korean: '바다', japanese: '海' },
+        { korean: '배우다', japanese: '習う' },
+        { korean: '사다', japanese: '買う' },
+        { korean: '산', japanese: '山' },
+        { korean: '살다', japanese: '住む' },
+        { korean: '수업', japanese: '授業' },
+        { korean: '수영복', japanese: '水着' },
+        { korean: '수영하다', japanese: '泳ぐ' },
+        { korean: '쉬다', japanese: '休む' },
+        { korean: '시간', japanese: '時間' },
+        { korean: '시내', japanese: '市内' },
+        { korean: '아무 데도', japanese: 'どこにも' },
+        { korean: '아무것도', japanese: '何も' },
+        { korean: '여행하다', japanese: '旅行する' },
+        { korean: '연휴', japanese: '連休' },
+        { korean: '영화관', japanese: '映画館' },
+        { korean: '온천', japanese: '温泉' },
+        { korean: '올해', japanese: '今年' },
+        { korean: '옷', japanese: '服' },
+        { korean: '왜', japanese: 'なぜ' },
+        { korean: '왜요?', japanese: 'どうしてですか？' },
+        { korean: '외식하다', japanese: '外食する' },
+        { korean: '우유', japanese: '牛乳' },
+        { korean: '이번', japanese: '今回' },
+        { korean: '일어나다', japanese: '起きる' },
+        { korean: '일찍', japanese: '早く' },
+        { korean: '자갈치시장', japanese: 'チャガルチ市場' },
+        { korean: '작년', japanese: '去年' },
+        { korean: '장소', japanese: '場所' },
+        { korean: '주말', japanese: '週末' },
+        { korean: '캠핑하다', japanese: 'キャンプする' },
+        { korean: '해운대', japanese: '海雲台' },
+        { korean: '회', japanese: '刺身' },
+        { korean: '휴일', japanese: '休日' },
+      ],
+      15: [
+        { korean: '가깝다', japanese: '近い' },
+        { korean: '계시다', japanese: 'いらっしゃる' },
+        { korean: '고마워요', japanese: 'ありがとうございます' },
+        { korean: '고맙다', japanese: 'ありがとう' },
+        { korean: '괜찮다', japanese: '大丈夫だ' },
+        { korean: '귀엽다', japanese: 'かわいい' },
+        { korean: '다행이다', japanese: 'よかった' },
+        { korean: '단어', japanese: '単語' },
+        { korean: '대답하다', japanese: '答える' },
+        { korean: '덥다', japanese: '暑い' },
+        { korean: '드시다', japanese: '召し上がる' },
+        { korean: '듣기', japanese: '聞き取り' },
+        { korean: '듣다', japanese: '聞く' },
+        { korean: '말씀하시다', japanese: 'おっしゃる' },
+        { korean: '말하기', japanese: '会話' },
+        { korean: '말하다', japanese: '話す' },
+        { korean: '맞다', japanese: '合っている' },
+        { korean: '맵다', japanese: '辛い' },
+        { korean: '모르다', japanese: '知らない' },
+        { korean: '무겁다', japanese: '重い' },
+        { korean: '문법', japanese: '文法' },
+        { korean: '반가워요', japanese: 'うれしいです' },
+        { korean: '반갑다', japanese: 'うれしい' },
+        { korean: '발음', japanese: '発音' },
+        { korean: '별로 안', japanese: 'あまり～ない' },
+        { korean: '복습하다', japanese: '復習する' },
+        { korean: '부끄럽다', japanese: '恥ずかしい' },
+        { korean: '비슷하다', japanese: '似ている' },
+        { korean: '사귀다', japanese: '付き合う' },
+        { korean: '쉽다', japanese: '易しい' },
+        { korean: '시험', japanese: '試験' },
+        { korean: '시험을 보다', japanese: '試験を受ける' },
+        { korean: '쓰기', japanese: '作文' },
+        { korean: '쓰다', japanese: '書く' },
+        { korean: '아주', japanese: 'とても' },
+        { korean: '아직', japanese: 'まだ' },
+        { korean: '앉다', japanese: '座る' },
+        { korean: '알다', japanese: '知る' },
+        { korean: '어때요?', japanese: 'どうですか？' },
+        { korean: '어땠어요?', japanese: 'どうでしたか？' },
+        { korean: '어렵다', japanese: '難しい' },
+        { korean: '어제', japanese: '昨日' },
+        { korean: '연습', japanese: '練習' },
+        { korean: '외국어', japanese: '外国語' },
+        { korean: '이렇게', japanese: 'このように' },
+        { korean: '인사하다', japanese: 'あいさつする' },
+        { korean: '읽기', japanese: '読解' },
+        { korean: '읽다', japanese: '読む' },
+        { korean: '잘', japanese: 'よく' },
+        { korean: '제일', japanese: '一番' },
+        { korean: '조용히', japanese: '静かに' },
+        { korean: '주다', japanese: 'あげる' },
+        { korean: '주무시다', japanese: 'お休みになる' },
+        { korean: '준비', japanese: '準備' },
+        { korean: '질문하다', japanese: '質問する' },
+        { korean: '춥다', japanese: '寒い' },
+        { korean: '틀리다', japanese: '間違っている' },
+        { korean: '파이팅', japanese: 'ファイティン' },
+        { korean: '페이지', japanese: 'ページ' },
+        { korean: '표현', japanese: '表現' },
+        { korean: '한 잔', japanese: '一杯' },
+      ],
+      16: [
+        { korean: '가족', japanese: '家族' },
+        { korean: '그때', japanese: 'その時' },
+        { korean: '그래요.', japanese: 'そうです。' },
+        { korean: '그런데', japanese: 'ところで' },
+        { korean: '그럼', japanese: 'では' },
+        { korean: '끝나다', japanese: '終わる' },
+        { korean: '너무', japanese: 'とても' },
+        { korean: '노래를 부르다', japanese: '歌を歌う' },
+        { korean: '놀다', japanese: '遊ぶ' },
+        { korean: '도착하다', japanese: '到着する' },
+        { korean: '라면', japanese: 'ラーメン' },
+        { korean: '많이', japanese: 'たくさん' },
+        { korean: '멋있다', japanese: 'かっこいい' },
+        { korean: '미안하다', japanese: 'すまない' },
+        { korean: '바다', japanese: '海' },
+        { korean: '선배', japanese: '先輩' },
+        { korean: '술', japanese: '酒' },
+        { korean: '시간이 있다', japanese: '時間がある' },
+        { korean: '싫어요.', japanese: '嫌です。' },
+        { korean: '안 돼요!', japanese: 'だめです！' },
+        { korean: '앉다', japanese: '座る' },
+        { korean: '야구', japanese: '野球' },
+        { korean: '약속 시간', japanese: '約束の時間' },
+        { korean: '약속 장소', japanese: '約束の場所' },
+        { korean: '약속을 지키다', japanese: '約束を守る' },
+        { korean: '약속이 있다', japanese: '約束がある' },
+        { korean: '약속하다', japanese: '約束する' },
+        { korean: '여행을 가다', japanese: '旅行に行く' },
+        { korean: '오랜만이다', japanese: '久しぶりだ' },
+        { korean: '온천', japanese: '温泉' },
+        { korean: '왜요?', japanese: 'どうしてですか？' },
+        { korean: '일이 있다', japanese: '用事がある' },
+        { korean: '자다', japanese: '寝る' },
+        { korean: '잘 지냈어요?', japanese: '元気でしたか？' },
+        { korean: '정말요?', japanese: '本当ですか？' },
+        { korean: '참!', japanese: 'そうだ！' },
+        { korean: '춤을 추다', japanese: '踊る' },
+        { korean: '토요일', japanese: '土曜日' },
+        { korean: '팬', japanese: 'ファン' },
+        { korean: '피곤하다', japanese: '疲れている' },
+        { korean: '한잔하다', japanese: '一杯やる' },
+        { korean: '행복하다', japanese: '幸せだ' },
+      ],
+      17: [
+        { korean: '~짜리', japanese: '～の' },
+        { korean: '가게', japanese: '店' },
+        { korean: '가르치다', japanese: '教える' },
+        { korean: '검은색', japanese: '黒色' },
+        { korean: '고객님', japanese: 'お客様' },
+        { korean: '공항', japanese: '空港' },
+        { korean: '구두', japanese: '革靴' },
+        { korean: '그래요?', japanese: 'そうですか？' },
+        { korean: '길다', japanese: '長い' },
+        { korean: '나중에', japanese: 'あとで' },
+        { korean: '넥타이', japanese: 'ネクタイ' },
+        { korean: '노란색', japanese: '黄色' },
+        { korean: '녹색', japanese: '緑色' },
+        { korean: '다 ', japanese: '全部' },
+        { korean: '다양하다', japanese: '多様だ' },
+        { korean: '도와드리다', japanese: 'お手伝いする' },
+        { korean: '도와주세요', japanese: '手伝ってください' },
+        { korean: '됐습니다', japanese: 'できました' },
+        { korean: '디자인', japanese: 'デザイン' },
+        { korean: '만', japanese: '万' },
+        { korean: '많다', japanese: '多い' },
+        { korean: '멋있다', japanese: 'かっこいい' },
+        { korean: '모자', japanese: '帽子' },
+        { korean: '바지', japanese: 'ズボン' },
+        { korean: '백', japanese: '百' },
+        { korean: '백만', japanese: '百万' },
+        { korean: '벗다', japanese: '脱ぐ' },
+        { korean: '보이다', japanese: '見える' },
+        { korean: '브랜드', japanese: 'ブランド' },
+        { korean: '비싸다', japanese: '（値段が）高い' },
+        { korean: '비싸다', japanese: '高い' },
+        { korean: '빨간색', japanese: '赤色' },
+        { korean: '빨리', japanese: '早く' },
+        { korean: '사다', japanese: '買う' },
+        { korean: '사이즈', japanese: 'サイズ' },
+        { korean: '사인하다', japanese: 'サインする' },
+        { korean: '색깔', japanese: '色' },
+        { korean: '쇼핑', japanese: 'ショッピング' },
+        { korean: '신다', japanese: '履く' },
+        { korean: '신발', japanese: '靴' },
+        { korean: '십', japanese: '十' },
+        { korean: '십만', japanese: '十万' },
+        { korean: '싸다', japanese: '（値段が）安い' },
+        { korean: '쓰다', japanese: 'かぶる' },
+        { korean: '아주', japanese: 'とても' },
+        { korean: '안경', japanese: '眼鏡' },
+        { korean: '알겠습니다.', japanese: 'わかりました' },
+        { korean: '양말', japanese: '靴下' },
+        { korean: '어떠세요?', japanese: 'いかがですか？' },
+        { korean: '어서 오세요', japanese: 'いらっしゃいませ' },
+        { korean: '얼마예요?', japanese: 'いくらですか？' },
+        { korean: '여기 있습니다', japanese: 'こちらにあります' },
+        { korean: '예쁘다', japanese: 'きれいだ' },
+        { korean: '옷', japanese: '服' },
+        { korean: '와인', japanese: 'ワイン' },
+        { korean: '요즘', japanese: '最近' },
+        { korean: '우산', japanese: '傘' },
+        { korean: '운동화', japanese: 'スニーカー' },
+        { korean: '유행이다', japanese: '流行だ' },
+        { korean: '유행하다', japanese: '流行する' },
+        { korean: '입다', japanese: '着る' },
+        { korean: '자동차', japanese: '自動車' },
+        { korean: '작다', japanese: '小さい' },
+        { korean: '잠시만', japanese: '少々お待ちください' },
+        { korean: '전화하다', japanese: '電話する' },
+        { korean: '조용히', japanese: '静かに' },
+        { korean: '짧다', japanese: '短い' },
+        { korean: '천', japanese: '千' },
+        { korean: '치마', japanese: 'スカート' },
+        { korean: '크다', japanese: '大きい' },
+        { korean: '티셔츠', japanese: 'Tシャツ' },
+        { korean: '파란색', japanese: '青色' },
+        { korean: '패션', japanese: 'ファッション' },
+        { korean: '흰색', japanese: '白色' },
+      ],
+      18: [
+        { korean: '가깝다', japanese: '近い' },
+        { korean: '가을', japanese: '秋' },
+        { korean: '건조하다', japanese: '乾燥している' },
+        { korean: '겨울', japanese: '冬' },
+        { korean: '계절', japanese: '季節' },
+        { korean: '고양이', japanese: '猫' },
+        { korean: '귀엽다', japanese: 'かわいい' },
+        { korean: '기온', japanese: '気温' },
+        { korean: '날씨', japanese: '天気' },
+        { korean: '낮다', japanese: '低い' },
+        { korean: '넓다', japanese: '広い' },
+        { korean: '노래', japanese: '歌' },
+        { korean: '높다', japanese: '高い' },
+        { korean: '눈', japanese: '雪' },
+        { korean: '눈이 내리다', japanese: '雪が降る' },
+        { korean: '눈이 오다', japanese: '雪が降る' },
+        { korean: '덥다', japanese: '暑い' },
+        { korean: '돈', japanese: 'お金' },
+        { korean: '디자인', japanese: 'デザイン' },
+        { korean: '따뜻하다', japanese: '暖かい' },
+        { korean: '맑다', japanese: '晴れる' },
+        { korean: '맵다', japanese: '辛い' },
+        { korean: '멀다', japanese: '遠い' },
+        { korean: '무덥다', japanese: '蒸し暑い' },
+        { korean: '바람', japanese: '風' },
+        { korean: '바람이 불다', japanese: '風が吹く' },
+        { korean: '벌써', japanese: 'もう' },
+        { korean: '별로이다', japanese: 'あまりよくない' },
+        { korean: '봄', japanese: '春' },
+        { korean: '비', japanese: '雨' },
+        { korean: '비가 내리다', japanese: '雨が降る' },
+        { korean: '비가 오다', japanese: '雨が降る' },
+        { korean: '비슷하다', japanese: '似ている' },
+        { korean: '사랑하다', japanese: '愛する' },
+        { korean: '성격', japanese: '性格' },
+        { korean: '쉽다', japanese: '易しい' },
+        { korean: '습하다', japanese: '湿っている' },
+        { korean: '시원하다', japanese: '涼しい' },
+        { korean: '심하다', japanese: 'ひどい' },
+        { korean: '쌀쌀하다', japanese: '肌寒い' },
+        { korean: '여름', japanese: '夏' },
+        { korean: '요리', japanese: '料理' },
+        { korean: '작다', japanese: '小さい' },
+        { korean: '잘하다', japanese: '上手だ' },
+        { korean: '장마', japanese: '梅雨' },
+        { korean: '지각하다', japanese: '遅刻する' },
+        { korean: '지진', japanese: '地震' },
+        { korean: '진짜', japanese: '本当' },
+        { korean: '짜다', japanese: 'しょっぱい' },
+        { korean: '참', japanese: '本当に' },
+        { korean: '청소', japanese: '掃除' },
+        { korean: '춥다', japanese: '寒い' },
+        { korean: '크다', japanese: '大きい' },
+        { korean: '태풍', japanese: '台風' },
+        { korean: '편리하다', japanese: '便利だ' },
+        { korean: '헤어지다', japanese: '別れる' },
+        { korean: '황사', japanese: '黄砂' },
+        { korean: '흐리다', japanese: '曇る' },
+      ],
+      19: [
+        { korean: '가슴', japanese: '胸' },
+        { korean: '간호사', japanese: '看護師' },
+        { korean: '감기', japanese: '風邪' },
+        { korean: '감기에 걸렸어요', japanese: '風邪をひきました' },
+        { korean: '감기에 걸리다', japanese: '風邪をひく' },
+        { korean: '계시다', japanese: 'いらっしゃる' },
+        { korean: '고맙습니다', japanese: 'ありがとうございます' },
+        { korean: '고향', japanese: '故郷' },
+        { korean: '과일', japanese: '果物' },
+        { korean: '귀', japanese: '耳' },
+        { korean: '기침', japanese: '咳' },
+        { korean: '기침을 하다', japanese: '咳をする' },
+        { korean: '꼭', japanese: '必ず' },
+        { korean: '눈', japanese: '目' },
+        { korean: '다리', japanese: '脚' },
+        { korean: '다치다', japanese: 'けがする' },
+        { korean: '독감', japanese: 'インフルエンザ' },
+        { korean: '드시다', japanese: '召し上がる' },
+        { korean: '마트', japanese: 'スーパー' },
+        { korean: '많이 드세요.', japanese: 'たくさん召し上がってください' },
+        { korean: '머리', japanese: '頭' },
+        { korean: '멋있다', japanese: 'かっこいい' },
+        { korean: '목', japanese: '首' },
+        { korean: '바쁘다', japanese: '忙しい' },
+        { korean: '발', japanese: '足' },
+        { korean: '배', japanese: 'お腹' },
+        { korean: '병', japanese: '病気' },
+        { korean: '병원', japanese: '病院' },
+        { korean: '붓다', japanese: '腫れる' },
+        { korean: '산책', japanese: '散歩' },
+        { korean: '생선', japanese: '魚' },
+        { korean: '세 번', japanese: '三回' },
+        { korean: '손', japanese: '手' },
+        { korean: '아프다', japanese: '痛い' },
+        { korean: '안 계시다', japanese: 'いらっしゃらない' },
+        { korean: '안녕히 주무세요.', japanese: 'おやすみなさい' },
+        { korean: '야채', japanese: '野菜' },
+        { korean: '약', japanese: '薬' },
+        { korean: '약국', japanese: '薬局' },
+        { korean: '약사', japanese: '薬剤師' },
+        { korean: '약을 먹다', japanese: '薬を飲む' },
+        { korean: '어깨', japanese: '肩' },
+        { korean: '어떻게', japanese: 'どうやって' },
+        { korean: '얼굴', japanese: '顔' },
+        { korean: '엉동이', japanese: 'お尻' },
+        { korean: '열', japanese: '熱' },
+        { korean: '열이 나다', japanese: '熱が出る' },
+        { korean: '요즘', japanese: '最近' },
+        { korean: '이', japanese: '歯' },
+        { korean: '이상', japanese: '以上' },
+        { korean: '일주일', japanese: '一週間' },
+        { korean: '일찍', japanese: '早く' },
+        { korean: '입', japanese: '口' },
+        { korean: '저희', japanese: '私たち' },
+        { korean: '정도', japanese: 'くらい' },
+        { korean: '주무시다', japanese: 'お休みになる' },
+        { korean: '친절하다', japanese: '親切だ' },
+        { korean: '코', japanese: '鼻' },
+        { korean: '콧물', japanese: '鼻水' },
+        { korean: '콧물이 나다', japanese: '鼻水が出る' },
+        { korean: '팔', japanese: '腕' },
+        { korean: '푹 쉬다', japanese: 'ゆっくり休む' },
+        { korean: '하루', japanese: '一日' },
+        { korean: '한국 분', japanese: '韓国の方' },
+        { korean: '허리', japanese: '腰' },
+      ],
+      20: [
+        { korean: '결혼하다', japanese: '結婚する' },
+        { korean: '귀엽다', japanese: 'かわいい' },
+        { korean: '근데', japanese: 'ところで' },
+        { korean: '글쎄요', japanese: 'さあ…' },
+        { korean: '나쁘다', japanese: '悪い' },
+        { korean: '날씬하다', japanese: 'やせている' },
+        { korean: '다르다', japanese: '違う' },
+        { korean: '똑똑하다', japanese: '頭がいい' },
+        { korean: '뚱뚱하다', japanese: '太っている' },
+        { korean: '마음이 넓다', japanese: '心が広い' },
+        { korean: '만들다', japanese: '作る' },
+        { korean: '맛있는 거', japanese: 'おいしいもの' },
+        { korean: '머리가 길다', japanese: '髪が長い' },
+        { korean: '머리가 짧다', japanese: '髪が短い' },
+        { korean: '멋있다', japanese: 'かっこいい' },
+        { korean: '못생겼어요', japanese: '不細工です' },
+        { korean: '못생기다', japanese: '不細工だ' },
+        { korean: '비슷하다', japanese: '似ている' },
+        { korean: '사귀다', japanese: '付き合う' },
+        { korean: '성격', japanese: '性格' },
+        { korean: '섹시하다', japanese: 'セクシーだ' },
+        { korean: '소개하다', japanese: '紹介する' },
+        { korean: '쉬는 날', japanese: '休みの日' },
+        { korean: '싸우다', japanese: 'けんかする' },
+        { korean: '아는 사람', japanese: '知り合い' },
+        { korean: '아이', japanese: '子ども' },
+        { korean: '아직', japanese: 'まだ' },
+        { korean: '어떤', japanese: 'どんな' },
+        { korean: '외모', japanese: '外見' },
+        { korean: '인기 있다', japanese: '人気がある' },
+        { korean: '잘생겼어요', japanese: 'ハンサムです' },
+        { korean: '잘생기다', japanese: 'ハンサムだ' },
+        { korean: '재미있다', japanese: '面白い' },
+        { korean: '정말요?', japanese: '本当ですか？' },
+        { korean: '죽다', japanese: '死ぬ' },
+        { korean: '착하다', japanese: '優しい' },
+        { korean: '친절하다', japanese: '親切だ' },
+        { korean: '친하다', japanese: '親しい' },
+        { korean: '키가 작다', japanese: '背が低い' },
+        { korean: '키가 크다', japanese: '背が高い' },
+        { korean: '타는 곳', japanese: '乗り場' },
+        { korean: '태어나다', japanese: '生まれる' },
+        { korean: '통통하다', japanese: 'ぽっちゃりしている' },
+        { korean: '헤어지다', japanese: '別れる' },
+      ],
+    };
+    
+    let units = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+    let currentUnit = null;
+    let currentWords = [];
+    let currentCardIndex = 0;
+    let quizIndex = 0;
+    let quizScore = 0;
+    let isFlipped = false;
+    let isRecording = false;
+    let recognition = null;
+    let progressData = {};
+    let quizMode = 'kr-to-jp'; // 'kr-to-jp' または 'jp-to-kr'
+
+    // 初期化
+    window.onload = function() {
+      setTimeout(() => {
+        renderUnits();
+        document.getElementById('mainLoading').classList.remove('active');
+        document.getElementById('unitsGrid1').classList.remove('hidden');
+        document.getElementById('unitsGrid2').classList.remove('hidden');
+      }, 800);
+      
+      initSpeechRecognition();
+    };
+    
+    function toggleSection(sectionId) {
+      const section = document.getElementById(sectionId);
+      const gridContainer = sectionId === 'section1' ? 
+        document.getElementById('grid1-container') : 
+        document.getElementById('grid2-container');
+      const icon = sectionId === 'section1' ? 
+        document.getElementById('icon1') : 
+        document.getElementById('icon2');
+      
+      if (section.classList.contains('collapsed')) {
+        section.classList.remove('collapsed');
+        gridContainer.classList.remove('collapsed');
+        icon.textContent = '▼';
+      } else {
+        section.classList.add('collapsed');
+        gridContainer.classList.add('collapsed');
+        icon.textContent = '▶';
+      }
+    }
+
+    function initSpeechRecognition() {
+      if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        
+        recognition.onresult = function(event) {
+          const transcript = event.results[0][0].transcript;
+          document.getElementById('answerInput').textContent = transcript;
+          document.getElementById('voiceStatus').textContent = `あなたの答え: ${transcript}`;
+          isRecording = false;
+          document.getElementById('micBtn').classList.remove('recording');
+          
+          // 0.5秒後に自動で答え合わせ (短縮)
+          setTimeout(() => {
+            checkAnswer();
+          }, 500);
+        };
+        
+        recognition.onerror = function(event) {
+          console.error('音声認識エラー:', event.error);
+          let errorMsg = 'もう一度お試しください';
+          
+          if (event.error === 'no-speech') {
+            errorMsg = '音声が聞こえませんでした。もう一度マイクボタンを押してください';
+          } else if (event.error === 'not-allowed' || event.error === 'permission-denied') {
+            errorMsg = '⚠️ マイクの使用許可が必要です。ブラウザの設定でマイクを許可してください';
+            // より詳しい説明をアラートで表示
+            setTimeout(() => {
+              alert('マイクの使用許可が必要です。\n\n【許可する方法】\n1. ブラウザのアドレスバー横のカメラアイコンをクリック\n2. 「マイク」を「許可」に変更\n3. ページを再読み込み\n\nまたは、ブラウザの設定からこのサイトのマイク使用を許可してください。');
+            }, 100);
+          } else if (event.error === 'network') {
+            errorMsg = 'ネットワークエラーが発生しました';
+          } else if (event.error === 'aborted') {
+            errorMsg = '音声認識が中断されました';
+          }
+          
+          document.getElementById('voiceStatus').textContent = errorMsg;
+          isRecording = false;
+          document.getElementById('micBtn').classList.remove('recording');
+        };
+        
+        recognition.onend = function() {
+          if (isRecording) {
+            // まだ録音中のフラグがあれば、音声が検出されなかった
+            document.getElementById('voiceStatus').textContent = '音声が聞こえませんでした。もう一度お試しください';
+          }
+          isRecording = false;
+          document.getElementById('micBtn').classList.remove('recording');
+        };
+      }
+    }
+
+    function renderUnits() {
+      // 1-10과 렌더링
+      const grid1 = document.getElementById('unitsGrid1');
+      grid1.innerHTML = '';
+      
+      for (let unit = 1; unit <= 10; unit++) {
+        const card = document.createElement('div');
+        card.className = 'unit-card';
+        card.style.animationDelay = `${(unit - 1) * 0.05}s`;
+        card.innerHTML = `
+          <div class="unit-number">第${unit}課</div>
+          <div class="unit-progress">未学習</div>
+        `;
+        card.onclick = () => openUnitModal(unit);
+        grid1.appendChild(card);
+      }
+      
+      // 11-20과 렌더링
+      const grid2 = document.getElementById('unitsGrid2');
+      grid2.innerHTML = '';
+      
+      for (let unit = 11; unit <= 20; unit++) {
+        const card = document.createElement('div');
+        card.className = 'unit-card';
+        card.style.animationDelay = `${(unit - 11) * 0.05}s`;
+        card.innerHTML = `
+          <div class="unit-number">第${unit}課</div>
+          <div class="unit-progress">未学習</div>
+        `;
+        card.onclick = () => openUnitModal(unit);
+        grid2.appendChild(card);
+      }
+    }
+
+    function openUnitModal(unit) {
+      currentUnit = unit;
+      document.getElementById('modalUnitTitle').textContent = `第${unit}課`;
+      document.getElementById('unitModal').classList.add('active');
+      
+      // 퀴즈 옵션 숨기기
+      hideQuizOptions();
+    }
+
+    function closeModal() {
+      document.getElementById('unitModal').classList.remove('active');
+      hideQuizOptions();
+    }
+    
+    function showQuizOptions() {
+      document.querySelector('#unitModal .modal-buttons').classList.add('hidden');
+      document.getElementById('quizOptionsButtons').classList.remove('hidden');
+    }
+    
+    function hideQuizOptions() {
+      document.querySelector('#unitModal .modal-buttons').classList.remove('hidden');
+      document.getElementById('quizOptionsButtons').classList.add('hidden');
+    }
+
+    function startFlashcards() {
+      closeModal();
+      
+      // 現在のユニットの単語を取得
+      currentWords = demoWords[currentUnit] || demoWords[1];
+      currentCardIndex = 0;
+      isFlipped = false;
+      
+      // フラッシュカードを更新
+      updateFlashcard();
+      
+      document.getElementById('flashcardModal').classList.add('active');
+    }
+
+    function startQuiz(mode) {
+      // 퀴즈 설정
+      quizMode = mode || 'kr-to-jp';
+      
+      // 現在のユニットの単語を取得
+      currentWords = demoWords[currentUnit] || demoWords[1];
+      
+      // 単語をシャッフル
+      const shuffled = [...currentWords].sort(() => Math.random() - 0.5);
+      currentWords = shuffled.slice(0, Math.min(10, shuffled.length)); // 最大10問
+      
+      quizIndex = 0;
+      quizScore = 0;
+      
+      // 音声認識の言語設定
+      if (recognition) {
+        recognition.lang = quizMode === 'kr-to-jp' ? 'ja-JP' : 'ko-KR';
+      }
+      
+      // モーダルを閉じてクイズ画面を表示
+      closeModal();
+      showQuizQuestion();
+      document.getElementById('quizModal').classList.add('active');
+    }
+
+    function closeFlashcardModal() {
+      document.getElementById('flashcardModal').classList.remove('active');
+      isFlipped = false;
+      document.getElementById('flashcard').classList.remove('flipped');
+    }
+
+    function closeQuizModal() {
+      document.getElementById('quizModal').classList.remove('active');
+      
+      // 결과 화면 제거
+      const summaryDiv = document.getElementById('quizSummary');
+      if (summaryDiv) {
+        summaryDiv.remove();
+      }
+      
+      // 퀴즈 컨테이너 다시 표시
+      document.getElementById('quizContainer').classList.remove('hidden');
+      
+      // 입력 필드 초기화
+      document.getElementById('answerInput').textContent = '';
+      document.getElementById('quizResult').classList.add('hidden');
+    }
+
+    function flipCard() {
+      const flashcard = document.getElementById('flashcard');
+      flashcard.classList.toggle('flipped');
+      isFlipped = !isFlipped;
+    }
+
+    function previousCard() {
+      if (currentCardIndex > 0) {
+        currentCardIndex--;
+        updateFlashcard();
+        
+        // カードを表面に戻す
+        const flashcard = document.getElementById('flashcard');
+        if (isFlipped) {
+          flashcard.classList.remove('flipped');
+          isFlipped = false;
+        }
+      }
+    }
+
+    function nextCard() {
+      if (currentCardIndex < currentWords.length - 1) {
+        currentCardIndex++;
+        updateFlashcard();
+        
+        // カードを表面に戻す
+        const flashcard = document.getElementById('flashcard');
+        if (isFlipped) {
+          flashcard.classList.remove('flipped');
+          isFlipped = false;
+        }
+      }
+    }
+
+    function updateFlashcard() {
+      const word = currentWords[currentCardIndex];
+      
+      // カードの内容を更新
+      document.getElementById('flashcardWord').textContent = word.korean;
+      document.getElementById('flashcardMeaning').textContent = word.japanese;
+      
+      // カウンターを更新
+      document.getElementById('currentCard').textContent = currentCardIndex + 1;
+      document.getElementById('totalCards').textContent = currentWords.length;
+      
+      // ボタンの有効/無効を設定
+      document.getElementById('prevBtn').disabled = currentCardIndex === 0;
+      document.getElementById('nextBtn').disabled = currentCardIndex === currentWords.length - 1;
+    }
+
+    function playAudio(event) {
+      event.stopPropagation();
+      
+      const word = currentWords[currentCardIndex];
+      const utterance = new SpeechSynthesisUtterance(word.korean);
+      utterance.lang = 'ko-KR';
+      utterance.rate = 0.8;
+      
+      speechSynthesis.cancel();
+      speechSynthesis.speak(utterance);
+    }
+
+    function toggleRecording() {
+      if (!recognition) {
+        alert('このブラウザは音声認識に対応していません。Chrome、Edge、Safariをご利用ください。');
+        return;
+      }
+      
+      const micBtn = document.getElementById('micBtn');
+      const voiceStatus = document.getElementById('voiceStatus');
+      
+      if (!isRecording) {
+        // 먼저 마이크 권한 확인
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(function(stream) {
+              // 권한 허용됨 - 스트림 정지
+              stream.getTracks().forEach(track => track.stop());
+              
+              // 録音開始
+              isRecording = true;
+              micBtn.classList.add('recording');
+              voiceStatus.textContent = '話してください...';
+              
+              // 퀴즈 모드에 따라 언어 설정
+              recognition.lang = quizMode === 'kr-to-jp' ? 'ja-JP' : 'ko-KR';
+              
+              try {
+                recognition.start();
+              } catch (error) {
+                console.error('音声認識開始エラー:', error);
+                isRecording = false;
+                micBtn.classList.remove('recording');
+                voiceStatus.textContent = 'もう一度お試しください';
+              }
+            })
+            .catch(function(err) {
+              voiceStatus.textContent = '⚠️ マイクの使用許可が必要です';
+              alert('⚠️ マイクの使用許可が必要です。\n\n【許可する方法】\n1. ブラウザのアドレスバー横のカメラアイコン🎤をクリック\n2. 「マイク」を「許可」に変更\n3. ページを再読み込み');
+            });
+        }
+      } else {
+        // 録音停止
+        isRecording = false;
+        micBtn.classList.remove('recording');
+        voiceStatus.textContent = 'マイクボタンを押して音声入力';
+        try {
+          recognition.stop();
+        } catch(e) {}
+      }
+    }
+
+    function checkAnswer() {
+      const answer = document.getElementById('answerInput').textContent.trim();
+      if (!answer) {
+        return;
+      }
+      
+      const currentWord = currentWords[quizIndex];
+      let correctAnswer;
+      
+      if (quizMode === 'kr-to-jp') {
+        correctAnswer = currentWord.japanese;
+      } else {
+        correctAnswer = currentWord.korean;
+      }
+      
+      const resultDiv = document.getElementById('quizResult');
+      
+      // 答え合わせ（完全一致または含む）
+      const isCorrect = answer === correctAnswer || correctAnswer.includes(answer) || answer.includes(correctAnswer);
+      
+      if (isCorrect) {
+        quizScore++;
+        resultDiv.textContent = `⭕ 正解！`;
+        resultDiv.className = 'quiz-result correct';
+      } else {
+        resultDiv.textContent = `❌ 不正解。正しい答え: ${correctAnswer}`;
+        resultDiv.className = 'quiz-result incorrect';
+      }
+      
+      resultDiv.classList.remove('hidden');
+      
+      // 次の問題へ (1.5秒으로 단축)
+      setTimeout(() => {
+        quizIndex++;
+        if (quizIndex < currentWords.length) {
+          showQuizQuestion();
+          resultDiv.classList.add('hidden');
+        } else {
+          showQuizResults();
+        }
+      }, 1500);
+    }
+    
+    function showQuizQuestion() {
+      const word = currentWords[quizIndex];
+      
+      // 모드에 따라 문제와 프롬프트 변경
+      if (quizMode === 'kr-to-jp') {
+        document.getElementById('quizWord').textContent = word.korean;
+        document.getElementById('quizPrompt').textContent = '日本語の意味を話してください';
+      } else {
+        document.getElementById('quizWord').textContent = word.japanese;
+        document.getElementById('quizPrompt').textContent = '韓国語で話してください';
+      }
+      
+      document.getElementById('answerInput').textContent = '';
+      
+      // 進捗を更新
+      const modeText = quizMode === 'kr-to-jp' ? '🇰🇷→🇯🇵' : '🇯🇵→🇰🇷';
+      document.getElementById('quizTitle').textContent = `${modeText} (${quizIndex + 1}/${currentWords.length})`;
+      
+      // 結果を隠す
+      document.getElementById('quizResult').classList.add('hidden');
+      
+      // 音声状態をリセット
+      document.getElementById('voiceStatus').textContent = 'マイクボタンを押して音声入力';
+      const micBtn = document.getElementById('micBtn');
+      if (micBtn.classList.contains('recording')) {
+        micBtn.classList.remove('recording');
+        isRecording = false;
+        if (recognition) {
+          try {
+            recognition.stop();
+          } catch(e) {}
+        }
+      }
+      
+      // クイズコンテナを表示、結果画面を隠す
+      document.getElementById('quizContainer').classList.remove('hidden');
+      const summaryDiv = document.getElementById('quizSummary');
+      if (summaryDiv) {
+        summaryDiv.remove();
+      }
+    }
+    
+    function showQuizResults() {
+      // クイズコンテナを隠す
+      document.getElementById('quizContainer').classList.add('hidden');
+      
+      // 結果画面を作成
+      const modalContent = document.querySelector('#quizModal .modal-content');
+      const summaryDiv = document.createElement('div');
+      summaryDiv.id = 'quizSummary';
+      summaryDiv.className = 'quiz-summary';
+      
+      const percentage = Math.round((quizScore / currentWords.length) * 100);
+      let message = '';
+      if (percentage === 100) {
+        message = '完璧です！🎉';
+      } else if (percentage >= 80) {
+        message = '素晴らしい！👏';
+      } else if (percentage >= 60) {
+        message = 'よくできました！😊';
+      } else {
+        message = 'もう一度挑戦してみましょう！💪';
+      }
+      
+      summaryDiv.innerHTML = `
+        <div class="quiz-score">${quizScore}/${currentWords.length}</div>
+        <div class="quiz-message">${message}</div>
+        <button class="btn btn-primary" onclick="retryQuiz()" style="width: 100%; margin-bottom: 12px;">
+          <span>もう一度挑戦</span>
+        </button>
+        <button class="btn btn-back" onclick="closeQuizModal()">
+          <span>終了</span>
+        </button>
+      `;
+      
+      modalContent.appendChild(summaryDiv);
+    }
+    
+    function retryQuiz() {
+      // 結果画面を削除
+      const summaryDiv = document.getElementById('quizSummary');
+      if (summaryDiv) {
+        summaryDiv.remove();
+      }
+      
+      // クイズを再開
+      startQuiz();
+    }
+  </script>
+</body>
+</html>
