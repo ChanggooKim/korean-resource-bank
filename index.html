@@ -504,19 +504,16 @@
   };
 
   document.getElementById("tw-input").addEventListener("input", function(){
-    clearTimeout(timer);
-    const q = this.value.trim();
-    const sug = document.getElementById("tw-suggest");
-    if(!q){ sug.style.display="none"; return; }
-    timer = setTimeout(()=>{
-      const hits = search(q).slice(0,8);
-      if(!hits.length){ sug.style.display="none"; return; }
-      const posMap={NNG:"명사",NNP:"고유명사",VV:"동사",VA:"형용사","명사":"명사","동사":"동사","형용사":"형용사"};
-      sug.innerHTML = hits.map(v=>`<div class="tw-suggest-item" onclick="twShow('${(v.word||"").replace(/'/g,"\'")}')">
-        ${e(v.word)}<span class="tw-s-sub">${lang==="jp"?e(v.japanese):e(v.english)}</span>
-      </div>`).join("");
-      sug.style.display="block";
-    }, 120);
+    document.getElementById("tw-suggest").style.display="none";
+  });
+
+  // Enter 키로 검색
+  document.getElementById("tw-input").addEventListener("keydown", function(ev){
+    if(ev.key==="Enter"){
+      const q = this.value.trim();
+      const hits = search(q);
+      if(hits.length) twShow(hits[0].word);
+    }
   });
 
   // 키보드 ESC로 닫기
