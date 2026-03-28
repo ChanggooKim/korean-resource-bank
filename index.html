@@ -365,7 +365,7 @@
   <div id="topik-widget">
     <div class="tw-header" style="position:relative;">
       <input class="tw-search" id="tw-input" type="search"
-        placeholder="TOPIK語彙検索（初級）"
+        placeholder="TOPIK語彙検索(β ver.)"
         autocomplete="off"/>
       <button class="tw-lang-btn tw-active" id="tw-btn-jp" onclick="twLang('jp')">JP</button>
       <button class="tw-lang-btn" id="tw-btn-en" onclick="twLang('en')">EN</button>
@@ -500,23 +500,18 @@
     document.getElementById("tw-popup").style.display="none";
   };
 
-  document.addEventListener("DOMContentLoaded", function(){
-    var input = document.getElementById("tw-input");
-    if(!input) return;
+  // Enter 키로 검색 (스크립트가 페이지 하단에 있으므로 DOM 이미 준비됨)
+  document.getElementById("tw-input").addEventListener("keydown", function(ev){
+    if(ev.key==="Enter"){
+      var q = this.value.trim();
+      var hits = search(q);
+      if(hits.length) twShow(hits[0].word);
+    }
+  });
 
-    // Enter 키로 검색
-    input.addEventListener("keydown", function(ev){
-      if(ev.key==="Enter"){
-        var q = this.value.trim();
-        var hits = search(q);
-        if(hits.length) twShow(hits[0].word);
-      }
-    });
-
-    // ESC로 팝업 닫기
-    document.addEventListener("keydown", function(ev){
-      if(ev.key==="Escape") twClose();
-    });
+  // ESC로 팝업 닫기
+  document.addEventListener("keydown", function(ev){
+    if(ev.key==="Escape") twClose();
   });
 
   window.twShow = function(word){
@@ -728,30 +723,5 @@
   }
 </script>
 
-<script>
-(function(){
-  const VOCAB_URL="/korean-resource-bank/vocab_data.json";
-  let data=[],lang="jp";
-  fetch(VOCAB_URL).then(r=>r.json()).then(d=>{data=d;}).catch(()=>{});
-  window.twLang=function(l){lang=l;document.getElementById("tw-btn-jp").classList.toggle("tw-active",l==="jp");document.getElementById("tw-btn-en").classList.toggle("tw-active",l==="en");};
-  window.twClose=function(){document.getElementById("tw-overlay").style.display="none";document.getElementById("tw-popup").style.display="none";};
-  document.addEventListener("DOMContentLoaded",function(){
-    document.getElementById("tw-input").addEventListener("keydown",function(ev){
-      if(ev.key==="Enter"){var q=this.value.trim();var v=data.find(function(d){return d.word===q;});if(v)twShow(v.word);}
-    });
-    document.addEventListener("keydown",function(ev){if(ev.key==="Escape")twClose();});
-  });
-  window.twShow=function(word){
-    var v=data.find(function(d){return d.word===word;});if(!v)return;
-    var pm={NNG:"명사",NNP:"고유명사",VV:"동사",VA:"형용사","명사":"명사","동사":"동사","형용사":"형용사"};
-    function e(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
-    var trans=lang==="jp"?(v.japanese?'<span class="tw-lbl">Jp</span>'+e(v.japanese):""):(v.english?'<span class="tw-lbl">En</span>'+e(v.english):"");
-    var col=v.collocations?'<div class="tw-colloc"><span class="tw-lbl">Collocation</span>'+e(v.collocations)+'</div>':"";
-    var ex=[1,2,3].map(function(n){var ko=v["ex"+n+"_ko"],sub=lang==="jp"?v["ex"+n+"_jp"]:v["ex"+n+"_en"];return ko?'<div class="tw-ex"><div class="tw-ex-ko">'+e(ko)+'</div>'+(sub?'<div class="tw-ex-sub">'+e(sub)+'</div>':"")+'</div>':"";}).join("");
-    document.getElementById("tw-popup-content").innerHTML='<div class="tw-popup-card"><div class="tw-word-line"><span class="tw-word">'+e(v.word)+'</span>'+(v.pos?'<span class="tw-pos">'+e(pm[v.pos]||v.pos)+'</span>':"")+'</div>'+(trans?'<div class="tw-trans">'+trans+'</div>':"")+col+(ex?'<div class="tw-examples">'+ex+'</div>':"")+'</div>';
-    document.getElementById("tw-overlay").style.display="block";
-    document.getElementById("tw-popup").style.display="block";
-  };
-})();
-</script></body>
+</body>
 </html>
